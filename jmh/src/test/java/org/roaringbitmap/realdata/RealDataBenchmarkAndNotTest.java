@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.roaringbitmap.RealDataset.*;
 import static org.roaringbitmap.realdata.wrapper.BitmapFactory.CONCISE;
 import static org.roaringbitmap.realdata.wrapper.BitmapFactory.WAH;
+import static org.roaringbitmap.realdata.wrapper.BitmapFactory.ROARING_RS;
 
 
 public class RealDataBenchmarkAndNotTest extends RealDataBenchmarkSanityTest {
@@ -35,6 +36,7 @@ public class RealDataBenchmarkAndNotTest extends RealDataBenchmarkSanityTest {
     public void setup() throws Exception {
         Assume.assumeFalse(type.equals(CONCISE) && immutable);
         Assume.assumeFalse(type.equals(WAH) && immutable);
+        Assume.assumeFalse(type.equals(ROARING_RS));
         super.setup();
     }
 

@@ -28,7 +28,8 @@ public abstract class RealDataBenchmarkSanityTest {
 
     public static final String[] BITMAP_TYPES = { CONCISE, WAH,
                                                   EWAH, EWAH32,
-                                                  ROARING, ROARING_WITH_RUN };
+                                                  ROARING, ROARING_WITH_RUN,
+                                                  ROARING_RS };
 
     public static final Boolean[] BITMAP_IMMUTABILITY = { false, true };
 

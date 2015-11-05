@@ -25,6 +25,7 @@ public final class BitmapFactory {
    public static final String EWAH32 = "ewah32";
    public static final String ROARING = "roaring";
    public static final String ROARING_WITH_RUN = "roaring_with_run";
+   public static final String ROARING_RS = "roaring_rs";
 
    private static final List<File> TEMP_FILES = new ArrayList<File>();
 
@@ -76,6 +77,10 @@ public final class BitmapFactory {
          roaring.runOptimize();
       }
       return new RoaringBitmapWrapper(roaring);
+   }
+
+   public static Bitmap newRoaringRSBitmap(int[] data) {
+      return new RoaringRSBitmapWrapper(data);
    }
 
    public static Bitmap newImmutableConciseBitmap(int[] data) {

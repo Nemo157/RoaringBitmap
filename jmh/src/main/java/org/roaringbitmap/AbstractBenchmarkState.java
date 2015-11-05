@@ -63,6 +63,8 @@ public abstract class AbstractBenchmarkState {
                 } else {
                     bitmap = newImmutableRoaringWithRunBitmap(data);
                 }
+            } else if (ROARING_RS.equals(type)) {
+                bitmap = newRoaringRSBitmap(data);
             }
 
             if (bitmap == null) {
