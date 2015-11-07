@@ -26,9 +26,9 @@ public abstract class RealDataBenchmarkSanityTest {
                                                     CENSUS_INCOME_SRT, CENSUS1881_SRT,
                                                     WEATHER_SEPT_85_SRT, WIKILEAKS_NOQUOTES_SRT };
 
-    public static final String[] BITMAP_TYPES = { CONCISE, WAH,
-                                                  EWAH, EWAH32,
-                                                  ROARING, ROARING_WITH_RUN,
+    public static final String[] BITMAP_TYPES = { // CONCISE, WAH,
+                                                  // EWAH, EWAH32,
+                                                  ROARING, // ROARING_WITH_RUN,
                                                   ROARING_RS };
 
     public static final Boolean[] BITMAP_IMMUTABILITY = { false, true };

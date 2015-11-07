@@ -12,7 +12,7 @@ mvn -f $BASEDIR/../real-roaring-dataset/pom.xml clean install
 
 echo "Building benchmarks jar"
 rm -f  $BASEDIR/target/benchmarks.jar
-mvn -f $BASEDIR/pom.xml clean install -Dtest=*$1* -DfailIfNoTests=false
+mvn -f $BASEDIR/pom.xml clean install -Dtest=*$1* -DfailIfNoTests=false -Djna.library.path="$BASEDIR/../../bindings/target/release"
 
 echo "Running benchmarks"
-java -jar $BASEDIR/target/benchmarks.jar -foe true -wi 5 -i 5 -f 1 $1
+java -Djna.library.path="$BASEDIR/../../bindings/target/release" -jar $BASEDIR/target/benchmarks.jar -foe true -wi 5 -i 5 -f 1 $1

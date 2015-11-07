@@ -29,7 +29,7 @@ final class RoaringRSBitmapWrapper implements Bitmap {
 
    @Override
    public int last() {
-      throw new RuntimeException();
+      return RoaringRS.roaring_rs_iter_last(RoaringRS.roaring_rs_iter(bitmap));
    }
 
    @Override
@@ -39,7 +39,7 @@ final class RoaringRSBitmapWrapper implements Bitmap {
 
    @Override
    public BitmapIterator iterator() {
-      throw new RuntimeException();
+      return new RoaringRSIteratorWrapper(RoaringRS.roaring_rs_iter(bitmap));
    }
 
    @Override
@@ -56,7 +56,6 @@ final class RoaringRSBitmapWrapper implements Bitmap {
    public Bitmap or(Bitmap other) {
       return new RoaringRSBitmapWrapper(RoaringRS.roaring_rs_or(bitmap, ((RoaringRSBitmapWrapper) other).bitmap));
    }
-
 
    @Override
    public Bitmap flip(int rangeStart, int rangeEnd) {
@@ -101,7 +100,9 @@ final class RoaringRSBitmapWrapper implements Bitmap {
    private static class RoaringRS {
       public static native Pointer roaring_rs_new();
       public static native Pointer roaring_rs_collect(int[] data, int length);
+      // Consumes bitmap
       public static native void roaring_rs_delete(Pointer bitmap);
+
       public static native boolean roaring_rs_insert(Pointer bitmap, int i);
       public static native boolean roaring_rs_contains(Pointer bitmap, int i);
       public static native int roaring_rs_len(Pointer bitmap);
@@ -110,8 +111,42 @@ final class RoaringRSBitmapWrapper implements Bitmap {
       public static native Pointer roaring_rs_xor(Pointer bitmap, Pointer other);
       public static native Pointer roaring_rs_sub(Pointer bitmap, Pointer other);
 
+      public static native Pointer roaring_rs_iter(Pointer bitmap);
+      // Consumes iter
+      public static native Pointer roaring_rs_iter_delete(Pointer iter);
+      // Consumes iter
+      public static native int roaring_rs_iter_last(Pointer iter);
+      public static native int roaring_rs_iter_next(Pointer iter);
+
       static {
-         Native.register("/Users/nemo157/sources/roaring-rs/bindings/target/release/libroaringrs.dylib");
+         Native.register("roaringrs");
+      }
+   }
+
+   private static class RoaringRSIteratorWrapper implements BitmapIterator {
+      private final Pointer iter;
+      private int next;
+
+      RoaringRSIteratorWrapper(Pointer iter) {
+         this.iter = iter;
+         this.next = RoaringRS.roaring_rs_iter_next(iter);
+      }
+
+      @Override
+      public boolean hasNext() {
+         return next != 0xFFFFFFFF;
+      }
+
+      @Override
+      public int next() {
+         int current = next;
+         next = RoaringRS.roaring_rs_iter_next(iter);
+         return current;
+      }
+
+      protected void finalize() throws Throwable {
+         RoaringRS.roaring_rs_iter_delete(iter);
+         super.finalize();
       }
    }
 }
