@@ -31,7 +31,7 @@ public abstract class RealDataBenchmarkSanityTest {
                                                   ROARING, // ROARING_WITH_RUN,
                                                   ROARING_RS };
 
-    public static final Boolean[] BITMAP_IMMUTABILITY = { false, true };
+    public static final Boolean[] BITMAP_IMMUTABILITY = { /* false, */ true };
 
 
     @SuppressWarnings("unchecked")

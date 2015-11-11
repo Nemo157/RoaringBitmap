@@ -36,7 +36,6 @@ public class RealDataBenchmarkAndNotTest extends RealDataBenchmarkSanityTest {
     public void setup() throws Exception {
         Assume.assumeFalse(type.equals(CONCISE) && immutable);
         Assume.assumeFalse(type.equals(WAH) && immutable);
-        Assume.assumeFalse(type.equals(ROARING_RS));
         super.setup();
     }
 
