@@ -10,15 +10,21 @@ import com.sun.jna.Pointer;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 final class RoaringRSBitmapWrapper implements Bitmap {
    private final Pointer bitmap;
+
+   RoaringRSBitmapWrapper() {
+      this.bitmap = RoaringRS.roaring_rs_new();
+   }
 
    RoaringRSBitmapWrapper(int[] data) {
       this.bitmap = RoaringRS.roaring_rs_collect(data, data.length);
    }
 
-   RoaringRSBitmapWrapper(Pointer bitmap) {
+   private RoaringRSBitmapWrapper(Pointer bitmap) {
       this.bitmap = bitmap;
    }
 
@@ -104,7 +110,34 @@ final class RoaringRSBitmapWrapper implements Bitmap {
 
    @Override
    public BitmapAggregator priorityQueueOrAggregator() {
-      throw new RuntimeException();
+      return new BitmapAggregator() {
+         @Override
+         public Bitmap aggregate(Iterable<Bitmap> bitmaps) {
+            PriorityQueue<RoaringRSBitmapWrapper> pq = new PriorityQueue<RoaringRSBitmapWrapper>(128,
+                    new Comparator<RoaringRSBitmapWrapper>() {
+                       @Override
+                       public int compare(RoaringRSBitmapWrapper a, RoaringRSBitmapWrapper b) {
+                          return a.cardinality() - b.cardinality();
+                       }
+                    }
+            );
+            for (Bitmap bitmap : bitmaps) {
+               pq.add((RoaringRSBitmapWrapper)bitmap);
+            }
+            RoaringRSBitmapWrapper result;
+            if (pq.isEmpty()) {
+               result = new RoaringRSBitmapWrapper();
+            } else {
+               while (pq.size() > 1) {
+                  RoaringRSBitmapWrapper x1 = pq.poll();
+                  RoaringRSBitmapWrapper x2 = pq.poll();
+                  pq.add((RoaringRSBitmapWrapper)x1.or(x2));
+               }
+               result = pq.poll();
+            }
+            return result;
+         }
+      };
    }
 
    @Override
